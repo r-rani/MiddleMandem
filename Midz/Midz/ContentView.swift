@@ -1,24 +1,30 @@
-//
-//  ContentView.swift
-//  Midz
-//
-//  Created by Komal Khan on 2026-01-10.
-//
-
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationView {
+            VStack(spacing: 24) {
+                Text("Meet in the Middle")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+
+                NavigationLink(destination: AddLocationsView()) {
+                    Text("Start Planning")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+
+                Spacer()
+            }
+            .padding()
         }
-        .padding()
     }
 }
 
 #Preview {
     ContentView()
 }
+

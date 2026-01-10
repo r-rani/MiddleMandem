@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct AddLocationsView: View {
-    // 2 @State vars to store user input
-    @State private var user1Location: String = ""
-    @State private var user2Location: String = ""
+    @State private var user1Location = ""
+    @State private var user2Location = ""
+    @State private var navigate = false
 
     var body: some View {
         VStack(spacing: 20) {
@@ -11,27 +11,22 @@ struct AddLocationsView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            // User 1
-            VStack(alignment: .leading) {
-                Text("User 1 Location:")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                TextField("Enter address", text: $user1Location)
-                    .textFieldStyle(.roundedBorder)
-            }
+            TextField("User 1 Location", text: $user1Location)
+                .textFieldStyle(.roundedBorder)
 
-            // User 2
-            VStack(alignment: .leading) {
-                Text("User 2 Location:")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                TextField("Enter address", text: $user2Location)
-                    .textFieldStyle(.roundedBorder)
+            TextField("User 2 Location", text: $user2Location)
+                .textFieldStyle(.roundedBorder)
+
+            NavigationLink(
+                destination: ResultsView(user1Location: user1Location, user2Location: user2Location),
+                isActive: $navigate
+            ) {
+                EmptyView()
             }
 
             Button("Continue") {
-                // For now, just print the inputs
-                print("User1: \(user1Location), User2: \(user2Location)")
+                // Trigger navigation
+                navigate = true
             }
             .buttonStyle(.borderedProminent)
             .padding(.top, 30)
