@@ -8,21 +8,56 @@
 import SwiftUI
 
 struct ResultsView: View {
-    let user1Location: String
-    let user2Location: String
+    let userName: String
+    let friendName: String
+    let midpoint: String // or coordinates
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("User 1: \(user1Location)")
-            Text("User 2: \(user2Location)")
-            Text("Here we will calculate the midpoint and show places.")
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                Text("Hey \(userName) & \(friendName)")
+                    .font(.largeTitle)
+                    .foregroundColor(Color(hexString: "#FF2F92"))
+                    .bold()
+
+                Text("Your meeting point is:")
+                    .foregroundColor(.white)
+                    .font(.headline)
+
+                Text(midpoint)
+                    .foregroundColor(.yellow)
+                    .font(.title2)
+                    .padding()
+
+                // TODO: maybe show a map here
+                Spacer()
+
+                Button(action: {
+                    // Go back or reset
+                }) {
+                    Text("Start Over")
+                        .fontWeight(.semibold)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color(hexString: "#FF2F92"), Color(hexString: "#FF69B4")]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                        .padding(.horizontal, 32)
+                }
+            }
+            .padding()
         }
-        .padding()
     }
 }
 
-struct ResultsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ResultsView(user1Location: "123 Street", user2Location: "456 Street")
-    }
+#Preview {
+    ResultsView(userName: "Komal", friendName: "Rani", midpoint: "Central Park Cafe")
 }
