@@ -8,18 +8,16 @@
 import SwiftUI
 
 struct AddLocationsView: View {
-    let userName: String
-
     var body: some View {
         ZStack {
             Color.black
                 .ignoresSafeArea()
 
             VStack(spacing: 24) {
-                Text("Hi \(userName) 👋")
+                Text("Add Locations")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(Color(hexString: "#FF2F92"))
+                    .foregroundColor(.pink)
 
                 Text("Enter locations for you and your friend")
                     .foregroundColor(.white)
@@ -36,6 +34,5 @@ struct AddLocationsView: View {
 }
 
 #Preview {
-    AddLocationsView(userName: "Komal")
+    AddLocationsView()
 }
-

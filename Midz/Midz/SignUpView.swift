@@ -5,17 +5,21 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SignUpView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(AuthManager.self) private var authManager
+    @Environment(\.dismiss) var dismiss
+    
     @State private var fullName = ""
+    @State private var username = ""
     @State private var address = ""
     @State private var password = ""
     @State private var confirmPassword = ""
     @State private var navigateToHome = false
     @State private var showError = false
     @State private var errorMessage = ""
-    
-    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         ZStack {
@@ -24,9 +28,6 @@ struct SignUpView: View {
             
             ScrollView {
                 VStack(spacing: 24) {
-                    
-                    Spacer()
-                        .frame(height: 40)
                     
                     // Logo
                     Image("midz_logo")
@@ -38,7 +39,7 @@ struct SignUpView: View {
                     Text("Create Account")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(Color(hexString: "#FF2F92"))
+                        .foregroundColor(.pink)
                     
                     // Subtitle
                     Text("Sign up to get started")
@@ -67,6 +68,24 @@ struct SignUpView: View {
                             .background(Color.gray.opacity(0.3))
                             .cornerRadius(10)
                             .foregroundColor(.white)
+                            .autocapitalization(.words)
+                    }
+                    .padding(.horizontal, 32)
+                    
+                    // Username Field
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Username")
+                            .foregroundColor(.white)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        
+                        TextField("Choose a username", text: $username)
+                            .padding()
+                            .background(Color.gray.opacity(0.3))
+                            .cornerRadius(10)
+                            .foregroundColor(.white)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
                     }
                     .padding(.horizontal, 32)
                     
@@ -133,7 +152,7 @@ struct SignUpView: View {
                             .padding()
                             .background(
                                 LinearGradient(
-                                    gradient: Gradient(colors: [Color(hexString: "#FF2F92"), Color(hexString: "#FF69B4")]),
+                                    gradient: Gradient(colors: [.pink, .purple]),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
@@ -154,25 +173,25 @@ struct SignUpView: View {
                         Button("Login") {
                             dismiss()
                         }
-                        .foregroundColor(Color(hexString: "#FF2F92"))
+                        .foregroundColor(.pink)
                         .fontWeight(.semibold)
                     }
                     .font(.subheadline)
                     .padding(.top, 8)
-                    
-                    Spacer()
-                        .frame(height: 40)
                 }
+                .padding(.top, 40)
+                .padding(.bottom, 40)
             }
+            .scrollDismissesKeyboard(.interactively)
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(isPresented: $navigateToHome) {
-            AddLocationsView(userName: fullName)
+            DashboardView()
         }
     }
     
     var isFormValid: Bool {
-        !fullName.isEmpty && !address.isEmpty && !password.isEmpty && !confirmPassword.isEmpty
+        !fullName.isEmpty && !username.isEmpty && !address.isEmpty && !password.isEmpty && !confirmPassword.isEmpty
     }
     
     func handleSignUp() {
@@ -190,19 +209,43 @@ struct SignUpView: View {
             return
         }
         
-        // Clear any errors
-        showError = false
-        errorMessage = ""
+        // Validate username format
+        guard username.count >= 3 else {
+            errorMessage = "Username must be at least 3 characters"
+            showError = true
+            return
+        }
         
-        // Navigate to home/locations view
-        navigateToHome = true
+        // Attempt to sign up
+        do {
+            let user = try authManager.signUp(
+                fullName: fullName,
+                username: username,
+                address: address,
+                password: password,
+                context: modelContext
+            )
+            
+            // Clear any errors
+            showError = false
+            errorMessage = ""
+            
+            print("User created successfully: \(user.fullName) (@\(user.username))")
+            
+            // Navigate to home/locations view
+            navigateToHome = true
+            
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+        }
     }
 }
 
 #Preview {
     NavigationStack {
         SignUpView()
+            .modelContainer(for: User.self, inMemory: true)
+            .environment(AuthManager())
     }
 }
-
-
