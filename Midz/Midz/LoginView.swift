@@ -1,52 +1,70 @@
+//
 //  LoginView.swift
 //  Midz
 //
-//  Created by Komal Khan on 2026-01-10.
+//  Login screen that authenticates an existing user.
 //
 
 import SwiftUI
 import SwiftData
 
+/// Allows users to log into the app using their credentials
 struct LoginView: View {
+
+    /// SwiftData model context
     @Environment(\.modelContext) private var modelContext
+
+    /// Authentication manager from the environment
     @Environment(AuthManager.self) private var authManager
+
+    /// Used to dismiss the view (return to sign-up)
     @Environment(\.dismiss) var dismiss
-    
+
+    // MARK: - State
+
+    /// User-entered username
     @State private var username = ""
+
+    /// User-entered password
     @State private var password = ""
+
+    /// Controls navigation to the dashboard on success
     @State private var navigateToHome = false
+
+    /// Error display state
     @State private var showError = false
     @State private var errorMessage = ""
-    
+
     var body: some View {
         ZStack {
+            // Background
             Color.black
                 .ignoresSafeArea()
-            
+
             ScrollView {
                 VStack(spacing: 24) {
-                    
+
                     Spacer()
                         .frame(height: 60)
-                    
-                    // Logo
+
+                    // App logo
                     Image("midz_logo")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 120)
-                    
+
                     // Title
                     Text("Welcome Back")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.pink)
-                    
+
                     // Subtitle
                     Text("Login to continue")
                         .foregroundColor(.white)
                         .font(.headline)
-                    
-                    // Road dashes
+
+                    // Decorative divider
                     HStack(spacing: 12) {
                         ForEach(0..<6) { _ in
                             Rectangle()
@@ -55,14 +73,14 @@ struct LoginView: View {
                         }
                     }
                     .padding(.vertical, 8)
-                    
-                    // Username Field
+
+                    // Username input
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Username")
                             .foregroundColor(.white)
                             .font(.subheadline)
                             .fontWeight(.medium)
-                        
+
                         TextField("Enter your username", text: $username)
                             .padding()
                             .background(Color.gray.opacity(0.3))
@@ -72,14 +90,14 @@ struct LoginView: View {
                             .autocorrectionDisabled()
                     }
                     .padding(.horizontal, 32)
-                    
-                    // Password Field
+
+                    // Password input
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Password")
                             .foregroundColor(.white)
                             .font(.subheadline)
                             .fontWeight(.medium)
-                        
+
                         SecureField("Enter your password", text: $password)
                             .padding()
                             .background(Color.gray.opacity(0.3))
@@ -87,19 +105,19 @@ struct LoginView: View {
                             .foregroundColor(.white)
                     }
                     .padding(.horizontal, 32)
-                    
-                    // Error message
+
+                    // Error message display
                     if showError {
                         Text(errorMessage)
                             .foregroundColor(.red)
                             .font(.subheadline)
                             .padding(.horizontal, 32)
                     }
-                    
-                    // Login Button
-                    Button(action: {
+
+                    // Login action button
+                    Button {
                         handleLogin()
-                    }) {
+                    } label: {
                         Text("Login")
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
@@ -113,17 +131,23 @@ struct LoginView: View {
                             )
                             .foregroundColor(.white)
                             .cornerRadius(12)
-                            .shadow(color: Color.white.opacity(0.2), radius: 5, x: 0, y: 3)
+                            .shadow(
+                                color: Color.white.opacity(0.2),
+                                radius: 5,
+                                x: 0,
+                                y: 3
+                            )
                     }
                     .padding(.horizontal, 32)
                     .padding(.top, 8)
                     .disabled(!isFormValid)
                     .opacity(isFormValid ? 1 : 0.6)
-                    
-                    // Don't have an account
+
+                    // Navigation to sign-up
                     HStack {
                         Text("Don't have an account?")
                             .foregroundColor(.white)
+
                         Button("Sign Up") {
                             dismiss()
                         }
@@ -132,39 +156,42 @@ struct LoginView: View {
                     }
                     .font(.subheadline)
                     .padding(.top, 8)
-                    
+
                     Spacer()
                 }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+
+        // Navigate to dashboard after successful login
         .navigationDestination(isPresented: $navigateToHome) {
             DashboardView()
         }
     }
-    
+
+    /// Validates that required fields are filled
     var isFormValid: Bool {
         !username.isEmpty && !password.isEmpty
     }
-    
+
+    /// Attempts to authenticate the user and handles errors
     func handleLogin() {
-        // Attempt to login
         do {
             let user = try authManager.login(
                 username: username,
                 password: password,
                 context: modelContext
             )
-            
-            // Clear any errors
+
+            // Reset error state
             showError = false
             errorMessage = ""
-            
+
             print("User logged in successfully: \(user.fullName) (@\(user.username))")
-            
-            // Navigate to home/locations view
+
+            // Trigger navigation to dashboard
             navigateToHome = true
-            
+
         } catch {
             errorMessage = error.localizedDescription
             showError = true
