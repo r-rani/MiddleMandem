@@ -1,11 +1,13 @@
 //  WelcomeView.swift
 //  Midz
 //
-//  Created by Komal Khan on 2026-01-10.
+//
+//  Landing screen that allows users to sign up or log in.
 //
 
 import SwiftUI
 
+/// The initial welcome screen shown to unauthenticated users
 struct WelcomeView: View {
     @State private var showLogin = false
     @State private var showSignUp = false
@@ -13,19 +15,20 @@ struct WelcomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                //Background colour
                 Color.black
                     .ignoresSafeArea()
                 
                 VStack(spacing: 32) {
                     Spacer()
                     
-                    // Logo
+                    // App Logo
                     Image("midz_logo")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 150, height: 150)
                     
-                    // Title
+                    // App Title
                     Text("Midz")
                         .font(.system(size: 60))
                         .fontWeight(.bold)
@@ -37,7 +40,7 @@ struct WelcomeView: View {
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                     
-                    // Road dashes
+                    //Decorative  Road dashes
                     HStack(spacing: 12) {
                         ForEach(0..<6) { _ in
                             Rectangle()
@@ -49,7 +52,7 @@ struct WelcomeView: View {
                     
                     Spacer()
                     
-                    // Buttons
+                    // Action Buttons
                     VStack(spacing: 16) {
                         // Sign Up Button
                         NavigationLink(destination: SignUpView()) {
