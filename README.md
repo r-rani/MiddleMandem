@@ -28,4 +28,7 @@ Midz helps friends coordinate meetups effortlessly by finding a fair midpoint, s
 - SwiftData  
 - MapKit  
 - CoreLocation  
-- MKLocalSearch  
+- MKLocalSearch
+
+# Contributors
+Rani, Rameen, Komal and Sarina
